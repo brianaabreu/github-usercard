@@ -3,10 +3,17 @@
            https://api.github.com/users/<your name>
 */
 
+axios.get('https://api.github.com/users/brianaabreu').then(response => {
+  console.log(response.data);
+  cards.appendChild(gitCards(response.data));
+});
+
+
+
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
-
    Skip to Step 3.
 */
 
@@ -24,11 +31,9 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
-
 <div class="card">
   <img src={image url of user} />
   <div class="card-info">
@@ -43,8 +48,57 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
+
+
+function gitCards(data) {
+  function checkIfNull(str) {
+    if (str) return str;
+    return '';
+  }
+  const newCard = document.createElement('div'),
+    newImg = document.createElement('img'),
+    newCardInfo = document.createElement('div'),
+    name = document.createElement('h3'),
+    username = document.createElement('p'),
+    location = document.createElement('p'),
+    profile = document.createElement('p'),
+    profileUrl = document.createElement('a'),
+    followers = document.createElement('p'),
+    following = document.createElement('p'),
+    bio = document.createElement('p');
+
+  newImg.src = data.avatar_url;
+  name.textContent = data.name;
+  username.textContent = data.login;
+  location.textContent = `Location: ${checkIfNull(data.location)}`;
+  profile.textContent = `Profile: ${checkIfNull(data.name)}`;
+  profileUrl.textContent = `Link: ${data.html_url}`;
+  followers.textContent = `Followers: ${checkIfNull(data.followers)}`;
+  following.textContent = `Following: ${checkIfNull(data.following)}`;
+  bio.textContent = `Bio: ${checkIfNull(data.bio)}`;
+
+
+  newCard.appendChild(newImg);
+  newCard.appendChild(newCardInfo);
+  newCardInfo.appendChild(name);
+  newCardInfo.appendChild(username);
+  newCardInfo.appendChild(location);
+  newCardInfo.appendChild(profile);
+  newCardInfo.appendChild(followers);
+  newCardInfo.appendChild(following);
+  newCardInfo.appendChild(bio);
+  newCardInfo.appendChild(profileUrl);
+
+
+  newCard.classList.add('card');
+  newCardInfo.classList.add('card-info');
+  name.classList.add('name');
+  username.classList.add('username');
+
+
+  return newCard;
+}
 
 /* List of LS Instructors Github username's: 
   tetondan
@@ -53,3 +107,26 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+const entryPoint = document.querySelector('.cards');
+
+const followersAr = [
+  'tdavis1991',
+  'kristinbarr',
+  'brolz',
+  'justsml',
+  'bigknell'
+];
+followersAr.forEach(follower => {
+  axios.get(`https://api.github.com/users/${follower}`)
+    .then(response => {
+      console.log(response);
+      cards.append(gitCards(response.data));
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+
+const cards = document.querySelector('.cards');
